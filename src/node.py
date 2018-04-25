@@ -19,6 +19,8 @@ class Node:
         self.confirmed = dict()
 
     def vote(self, message):
+        #parse(message) = nodeID, SCPenv
+        # store in voted = {SCPenv: nodeID}
         if message not in self.voted:
             self.voted[message] = 1
         else:
@@ -53,6 +55,18 @@ class Node:
 
     def receive_message(self, name):
         print("receivemessage")
+
+    def handle_msg(self, msg):
+        if msg == 'vote':
+            self.vote(msg)
+            print(self.voted)
+        elif msg == 'accept':
+            self.accept(msg)
+        elif msg == 'confirm':
+            self.confirm(msg)
+        else:
+            print(msg)
+
 
 
 

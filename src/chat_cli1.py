@@ -3,7 +3,7 @@ from threading import Thread
 import tkinter
 from node import Node
 
-node0 = Node('node0')
+node = Node('node')
 
 def receive():
     """Handles receiving of messages."""
@@ -11,8 +11,17 @@ def receive():
         try:
             msg = client_socket.recv(BUFSIZ).decode("utf8")
             msg_list.insert(tkinter.END, msg)
-            #node0.vote(msg)
-            #print(node0.voted)
+
+            # need to parse message into node:vote
+
+            peer, SCPenv = msg.split(" ")[0], msg.split(" ")[1]
+            # then, store the message into node.voted
+            node.handle_msg(SCPenv)
+            if SCPenv == 'vote':
+                print("i am sending", SCPenv)
+                client_socket.send(bytes(SCPenv, "utf8"))
+                print("i just sent", SCPenv)
+
         except OSError:  # Possibly client has left the chat.
             break
 
@@ -21,8 +30,8 @@ def send(event=None):  # event is passed by binders.
     """Handles sending of messages."""
     msg = my_msg.get()
     my_msg.set("")  # Clears input field.
-    node0.vote(msg)
-    print(node0.voted)
+    node.vote(msg)
+    print(node.voted)
     client_socket.send(bytes(msg, "utf8"))
     if msg == "{quit}":
         client_socket.close()
@@ -35,11 +44,10 @@ def on_closing(event=None):
     send()
 
 top = tkinter.Tk()
-top.title("Chatter")
+top.title("Node")
 
 messages_frame = tkinter.Frame(top)
 my_msg = tkinter.StringVar()  # For the messages to be sent.
-my_msg.set("Type your messages here.")
 scrollbar = tkinter.Scrollbar(messages_frame)  # To navigate through past messages.
 # Following will contain the messages.
 msg_list = tkinter.Listbox(messages_frame, height=15, width=50, yscrollcommand=scrollbar.set)
