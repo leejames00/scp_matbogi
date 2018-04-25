@@ -1,3 +1,4 @@
+import json
 
 class Node:
     def __init__(self, nodeID):
@@ -19,15 +20,17 @@ class Node:
         self.confirmed = dict()
 
     def vote(self, message):
-        #parse(message) = nodeID, SCPenv
+        message = json.loads(message)
+        nodeID, SCPenv = message['nodeID'], message['msgType']
         # store in voted = {SCPenv: nodeID}
-        if message not in self.voted:
-            self.voted[message] = 1
+        if SCPenv not in self.voted:
+            self.voted[SCPenv] = 1 # [nodeID]
         else:
-            self.voted[message] += 1
-        if self.voted[message] >= self.threshold:
-            self.voted.pop(message)
-            self.accept(message)
+            self.voted[SCPenv] += 1 #.append(nodeID)
+        if self.voted[SCPenv] >= self.threshold:
+            self.voted.pop(SCPenv)
+            print("vote goes to accept")
+            self.accept(SCPenv)
 
     def accept(self, message):
         if message not in self.accepted:
@@ -46,26 +49,17 @@ class Node:
         if self.confirmed[message] >= self.threshold:
             return "message is confirmed"
 
-    def send_message(self, name):
-        print("sent message")
-
-    def broadcast(self):
-        for node in self.qset:
-            self.send_message(node.name)
-
-    def receive_message(self, name):
-        print("receivemessage")
-
-    def handle_msg(self, msg):
-        if msg == 'vote':
-            self.vote(msg)
+    def handle_SCPenv(self, message):
+        nodeID, SCPenv = message.split(" ")[0], message.split(" ")[1]
+        if SCPenv == 'vote':
+            self.vote(message)
             print(self.voted)
-        elif msg == 'accept':
-            self.accept(msg)
-        elif msg == 'confirm':
-            self.confirm(msg)
+        elif SCPenv == 'accept':
+            self.accept(message)
+        elif SCPenv == 'confirm':
+            self.confirm(message)
         else:
-            print(msg)
+            print(SCPenv)
 
 
 
