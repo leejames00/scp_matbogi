@@ -8,6 +8,7 @@ import random
 nodeID = random.randint(1,100)
 node = Node(nodeID)
 
+
 def is_json(msg):
     try:
         json_object = json.loads(msg)
@@ -15,29 +16,42 @@ def is_json(msg):
         return False
     return True
 
+
 def receive():
     """Handles receiving of messages."""
     while True:
         try:
+
             msg = client_socket.recv(BUFSIZ).decode("utf8")
-            msg_list.insert(tkinter.END, msg)
-            # need to parse message into node:vote
-            # all messages are encoded in json /
-            #if message is encoded in json:
-            if is_json(msg):
-                print("this is json format")
-                msg = json.loads(msg)
+            node_name, json_msg = msg.split(" ")[0], ''.join(msg.split(" ")[1:])
+
+
+            if is_json(json_msg):
+                node.handle_message(json_msg) # receive vote and handle
+                msg = json.loads(json_msg)
                 peerID, SCPenv = msg['nodeID'], msg['msgType']
-                print(msg)
-            # then, store the message into node.voted
-                new_message = json.loads({'nodeID': node.nodeID, 'msgType': SCPenv})
-                node.handle_SCPenv(SCPenv)
-                print("i am sending", new_message)
+                print(peerID, SCPenv, node.nodeID)
+
+                new_message = json.dumps({'nodeID': node.nodeID, 'msgType': SCPenv}) # send my vote
+
+                if node.accepted: # if accepted is not empty
+                    new_message = json.dumps({'nodeID': node.nodeID, 'msgType': 'accept'})
+
+                elif node.confirmed: # if confirmed is not empty
+                    new_message = json.dumps({'nodeID': node.nodeID, 'msgType': 'confirm'})
+
+                node.handle_message(new_message)
                 client_socket.send(bytes(new_message, "utf8"))
-                print("voted: ", node.voted)
+
+                msg."voted: ", node.voted)
                 print("accepted: ", node.accepted)
                 print("confirmed: ", node.confirmed)
-                print("i just sent", SCPenv)
+
+                msg_list.insert(tkinter.END, )
+
+
+            else:
+                print("not json format")
 
         except OSError:  # Possibly client has left the chat.
             break
@@ -49,16 +63,10 @@ def send(event=None):  # event is passed by binders.
     my_msg.set("")  # Clears input field.
     # msg = json.puts({'nodeid': self.nodeid, 'msgtype': 'hello'}) #messag are all encoded in json
 
-
-    if msg == 'vote':
-        print(msg)
-        print(node.nodeID)
+    if msg == 'start':
         msg = json.dumps({'nodeID': node.nodeID, 'msgType': 'vote'})
-        print(msg)
         node.vote(msg)
-    # print("voted: ", node.voted)
-    # print("accepted: ", node.accepted)
-    # print("confirmed: ", node.confirmed)
+
     client_socket.send(bytes(msg, "utf8"))
     if msg == "{quit}":
         client_socket.close()

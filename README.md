@@ -8,23 +8,41 @@ python3
 ```
 
 ## Assumptions
-* instead of a p2p model, this implementation is a client-server model where the server broadcasts 
+* Federated voting process
+* Instead of a p2p model, this implementation is a client-server model where the server broadcasts 
 all the client's messages to the other clients.
-* assume that the server is not corrupt and the connection between the clients are secure
-* A quorum consists of five nodes
+* Assume that the server is not corrupt and the connection between the clients are secure
+* A quorum consists of five nodes, and the threshold is set to 4
 * There are no faulty nodes
-* all messages are considered valid
-* messages are encoded in json format, for example:
+* All messages are considered valid
+* Messages are encoded in json format, for example:
 ```json
 {'nodeID': nodeID, 'msgType': vote}
 ```
 
-## Implementation
+## Running
+
+To start the main server
+
+`python server.py`
+
+in another terminal,
+
+`python client.py`
+
+for each node 
+
+Set the node name for each node, and send `start` in one of the client to vote
 
 ## TODOs
-voted 으로 넣을때 node별로 넣어야함.
-voted = {'vote(a)': [node0, node1, node2, node3]} 이런식으로
-mylist = list(set(mylist)) --> 이러면 node 중복 없이 store 가능.
+
+* Dynamic quorum construction
+* Hashing 
+* Validating the messages
+* Instead of a client-server architecture, use p2p
+* Record the history of a node's fields in msg_list
+* 
+
 
 ## References
 
