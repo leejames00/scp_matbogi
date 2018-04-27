@@ -1,4 +1,4 @@
-# scp_matbogi
+# SCP_matbogi
 Matbogi project for BOSCoin - prototyping SCP 
 
 
@@ -32,16 +32,17 @@ in another terminal,
 
 for each node 
 
-Set the node name for each node, and send `start` in one of the client to vote
+Set the node name for each node, and send `start` in one of the clients to start voting
 
 ## TODOs
 
+* Implement blocking threshold
+* Set a node as faulty
 * Dynamic quorum construction
 * Hashing 
 * Validating the messages
 * Instead of a client-server architecture, use p2p
 * Record the history of a node's fields in msg_list
-* 
 
 
 ## References

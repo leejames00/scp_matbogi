@@ -3,7 +3,7 @@ import json
 class Node:
     def __init__(self, nodeID):
         self.nodeID = nodeID
-        self.threshold = 2
+        self.threshold = 4
         self.voted = dict()
         self.accepted = dict()
         self.confirmed = dict()
@@ -43,8 +43,8 @@ class Node:
         print("nodeID: added", self.nodeID)
         print("voted: ", self.voted)
 
-        if len(self.voted[SCPenv]) >= self.threshold:
-            self.voted.pop(SCPenv)
+        if len(self.voted[SCPenv]) == self.threshold:
+            #self.voted.pop(SCPenv)
             self.self_accept(SCPenv)
 
     def accept(self, message):
@@ -56,8 +56,8 @@ class Node:
 
         self.accepted[SCPenv].add(nodeID)
 
-        if len(self.accepted[SCPenv]) >= self.threshold:
-            self.accepted.pop(SCPenv)
+        if len(self.accepted[SCPenv]) == self.threshold:
+            #self.accepted.pop(SCPenv)
             self.self_confirm(SCPenv)
 
     def confirm(self, message):
@@ -69,7 +69,7 @@ class Node:
 
         self.confirmed[SCPenv].add(nodeID)
 
-        if len(self.confirmed[SCPenv]) >= self.threshold:
+        if len(self.confirmed[SCPenv]) == self.threshold:
             print(SCPenv + " is confirmed")
 
     def handle_message(self, message):
